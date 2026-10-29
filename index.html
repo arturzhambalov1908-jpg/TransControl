@@ -1,16 +1,134 @@
-<!DOCTYPE html>
-<html lang="ru">
- <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width,initial-scale=1" name="viewport"/>
-  <meta content="#081326" name="theme-color"/>
-  <title>
-   ТрансКонтроль — демонстрация
-  </title>
-  <link defer="" href="assets/css/style.css?v=2" rel="stylesheet"/>
- </head>
+
+  color: #5bb2ff !important;
+  border: 1px solid #285686 !important;
+}
+
+.auth-field {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  margin-bottom: 14px !important;
+  text-align: left !important;
+}
+
+.auth-field label {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #9ab4d2 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+.auth-field input,
+.auth-field select {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background: #08172b !important;
+  border: 1px solid #244369 !important;
+  border-radius: 10px !important;
+  padding: 11px 14px !important;
+  color: #ffffff !important;
+  font-size: 14px !important;
+  outline: none !important;
+  transition: border-color 0.2s, box-shadow 0.2s !important;
+  font-family: inherit !important;
+}
+
+.auth-field input:focus,
+.auth-field select:focus {
+  border-color: #4faaff !important;
+  box-shadow: 0 0 0 3px rgba(79, 170, 255, 0.2) !important;
+}
+
+.auth-submit-btn {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 13px !important;
+  background: linear-gradient(120deg, #096df1, #138cff) !important;
+  border: 1px solid #339cff !important;
+  border-radius: 11px !important;
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  box-shadow: 0 6px 20px rgba(9, 109, 241, 0.35) !important;
+  transition: transform 0.2s, filter 0.2s, box-shadow 0.2s !important;
+  margin-top: 6px !important;
+  display: block !important;
+  text-align: center !important;
+}
+
+.auth-submit-btn:hover {
+  transform: translateY(-2px) !important;
+  filter: brightness(1.1) !important;
+  box-shadow: 0 8px 25px rgba(9, 109, 241, 0.5) !important;
+}
+
+.auth-error {
+  background: rgba(239, 68, 68, 0.15) !important;
+  border: 1px solid rgba(239, 68, 68, 0.4) !important;
+  color: #ff9191 !important;
+  padding: 10px !important;
+  border-radius: 9px !important;
+  font-size: 12px !important;
+  margin-bottom: 14px !important;
+  text-align: center !important;
+}
+
+.auth-demo-hint {
+  margin-top: 16px !important;
+  padding: 12px !important;
+  border-radius: 10px !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px dashed rgba(255, 255, 255, 0.12) !important;
+  font-size: 12px !important;
+  color: #799bbb !important;
+  text-align: left !important;
+  line-height: 1.5 !important;
+}
+
+.auth-demo-hint code {
+  color: #64b5ff !important;
+  background: rgba(100, 181, 255, 0.12) !important;
+  padding: 2px 6px !important;
+  border-radius: 5px !important;
+  font-size: 11px !important;
+}
+
+/* Кнопка «Выйти» в шапке (яркая, стилизованная, всегда на виду) */
+.logout-btn {
+  background: #3c1a24 !important;
+  border: 1px solid #75293c !important;
+  color: #ff9cb0 !important;
+  padding: 8px 14px !important;
+  border-radius: 10px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  transition: all 0.2s ease !important;
+  margin-left: 10px !important;
+  white-space: nowrap !important;
+}
+
+.logout-btn:hover {
+  background: #5a2030 !important;
+  border-color: #a43852 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3) !important;
+}
+
+.hidden-by-role {
+  display: none !important;
+}
+
+</style>
+</head>
  <body>
-<!-- Окно авторизации и регистрации TransControl -->
+  <!-- Окно авторизации и регистрации TransControl -->
   <div id="authOverlay" class="auth-overlay">
    <div class="auth-card">
     <div class="auth-header">
@@ -21,78 +139,79 @@
 
     <!-- Переключатель: Вход / Регистрация -->
     <div class="auth-mode-switch">
-      <button type="button" class="mode-btn active" id="btnModeLogin">Вход</button>
-      <button type="button" class="mode-btn" id="btnModeRegister">Регистрация</button>
+     <button type="button" class="mode-btn active" id="btnModeLogin">Вход в систему</button>
+     <button type="button" class="mode-btn" id="btnModeRegister">Регистрация</button>
     </div>
 
-    <!-- ФОРМА ВХОДА -->
+    <!-- Форма входа -->
     <form id="authForm" class="auth-form">
-      <div class="auth-tabs">
-       <button type="button" class="auth-tab active" data-role="admin">Администратор</button>
-       <button type="button" class="auth-tab" data-role="employee">Сотрудник</button>
-      </div>
+     <div class="auth-tabs">
+      <button type="button" class="auth-tab active" data-role="admin">Администратор</button>
+      <button type="button" class="auth-tab" data-role="employee">Сотрудник</button>
+     </div>
 
-      <input type="hidden" id="authRole" value="admin">
+     <input type="hidden" id="authRole" value="admin">
 
-      <div class="auth-field">
-        <label id="authLoginLabel" for="authLogin">Логин администратора</label>
-        <input type="text" id="authLogin" placeholder="Введите логин" autocomplete="username" required>
-      </div>
+     <div class="auth-field">
+      <label id="authLoginLabel" for="authLogin">Логин администратора</label>
+      <input type="text" id="authLogin" placeholder="Введите логин" autocomplete="username" required>
+     </div>
 
-      <div class="auth-field">
-        <label for="authPassword">Пароль</label>
-        <input type="password" id="authPassword" placeholder="••••••••" autocomplete="current-password" required>
-      </div>
+     <div class="auth-field">
+      <label for="authPassword">Пароль</label>
+      <input type="password" id="authPassword" placeholder="••••••••" autocomplete="current-password" required>
+     </div>
 
-      <div id="authError" class="auth-error" style="display:none;"></div>
+     <div id="authError" class="auth-error" style="display:none;"></div>
 
-      <button type="submit" class="auth-submit-btn">Войти в систему</button>
+     <button type="submit" class="auth-submit-btn">Войти в панель</button>
 
-      <div class="auth-demo-hint">
-        <div><b>Тестовый доступ:</b></div>
-        <div>Админ: <code>admin</code> / <code>adminpassword</code></div>
-        <div>Водитель: <code>driver</code> / <code>123</code></div>
-      </div>
+     <div class="auth-demo-hint">
+      <div><b>Тестовые доступы:</b></div>
+      <div>• Админ: <code>admin</code> / <code>adminpassword</code></div>
+      <div>• Водитель: <code>driver</code> / <code>123</code></div>
+     </div>
     </form>
 
-    <!-- ФОРМА РЕГИСТРАЦИИ (по умолчанию скрыта) -->
+    <!-- Форма регистрации нового сотрудника -->
     <form id="regForm" class="auth-form" style="display:none;">
-      <div class="auth-field">
-        <label for="regName">ФИО сотрудника</label>
-        <input type="text" id="regName" placeholder="Иванов Алексей" required>
-      </div>
+     <div class="auth-field">
+      <label for="regName">ФИО сотрудника</label>
+      <input type="text" id="regName" placeholder="Иванов Алексей" required>
+     </div>
 
-      <div class="auth-field">
-        <label for="regRole">Должность</label>
-        <select id="regRole" style="background:#081527;border:1px solid rgba(100,181,255,0.22);border-radius:8px;padding:11px;color:#fff;">
-          <option value="Водитель">Водитель</option>
-          <option value="Диспетчер">Диспетчер</option>
-          <option value="Механик">Механик</option>
-          <option value="Логист">Логист</option>
-        </select>
-      </div>
+     <div class="auth-field">
+      <label for="regRole">Должность</label>
+      <select id="regRole">
+       <option value="Водитель">Водитель</option>
+       <option value="Диспетчер">Диспетчер</option>
+       <option value="Механик">Механик</option>
+       <option value="Логист">Логист</option>
+      </select>
+     </div>
 
-      <div class="auth-field">
-        <label for="regNumber">Табельный номер</label>
-        <input type="text" id="regNumber" placeholder="Например: 007" required>
-      </div>
+     <div class="auth-field">
+      <label for="regNumber">Табельный номер</label>
+      <input type="text" id="regNumber" placeholder="Например: 007" required>
+     </div>
 
-      <div class="auth-field">
-        <label for="regLogin">Придумайте логин</label>
-        <input type="text" id="regLogin" placeholder="Логин для входа" required>
-      </div>
+     <div class="auth-field">
+      <label for="regLogin">Придумайте логин</label>
+      <input type="text" id="regLogin" placeholder="Логин для входа" required>
+     </div>
 
-      <div class="auth-field">
-        <label for="regPass">Придумайте пароль</label>
-        <input type="password" id="regPass" placeholder="••••••••" required>
-      </div>
+     <div class="auth-field">
+      <label for="regPass">Придумайте пароль</label>
+      <input type="password" id="regPass" placeholder="••••••••" required>
+     </div>
 
-      <div id="regError" class="auth-error" style="display:none;"></div>
+     <div id="regError" class="auth-error" style="display:none;"></div>
 
-      <button type="submit" class="auth-submit-btn">Зарегистрироваться</button>
+     <button type="submit" class="auth-submit-btn">Зарегистрироваться</button>
     </form>
    </div>
   </div>
+
   <div class="ambient a">
   </div>
   <div class="ambient b">
@@ -160,12 +279,16 @@
       </p>
      </div>
      <div class="headright">
-      <div class="avatar">
+      <div class="avatar" id="currentUserAvatar">
        АД
       </div>
       <div class="admin">
-       Администратор
+       <span id="currentUserName">Администратор</span>
+       <small id="currentUserRole" style="display:block;font-size:11px;color:#7aa2cf;font-weight:normal;margin-top:2px;">Полный доступ</small>
       </div>
+      <button id="logoutBtn" type="button" class="logout-btn" onclick="logoutTransControl();" title="Выйти из аккаунта">
+       Выйти ✕
+      </button>
      </div>
     </header>
     <section class="page active" id="home">
@@ -652,7 +775,7 @@
   </div>
   <div class="toast" id="toast" role="status">
   </div>
-  <script defer="" src="assets/js/app.js?v=2">
+  <script defer="" src="assets/js/app.js">
   </script>
  </body>
 </html>
