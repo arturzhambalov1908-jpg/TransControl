@@ -1344,41 +1344,44 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .auth-form input:focus {
   border-color: #38bdf8;
 }
-
-.auth-error {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  color: #f87171;
+.auth-mode-switch {
+  display: flex;
+  border-bottom: 2px solid #162a45;
+  margin-bottom: 18px;
+  gap: 10px;
+}
+.mode-btn {
+  flex: 1;
   padding: 10px;
-  border-radius: 8px;
-  font-size: 13px;
-  margin-bottom: 16px;
-  text-align: center;
-}
-
-.auth-submit-btn {
-  width: 100%;
-  padding: 13px;
-  background: #0284c7;
+  background: transparent;
   border: none;
-  border-radius: 8px;
-  color: #ffffff;
-  font-size: 15px;
-  font-weight: 600;
+  border-bottom: 2px solid transparent;
+  color: #7998b9;
+  font-weight: 700;
+  font-size: 14px;
   cursor: pointer;
-  transition: background 0.2s;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+}
+.mode-btn.active {
+  color: #64b5ff;
+  border-bottom-color: #64b5ff;
 }
 
-.auth-submit-btn:hover {
-  background: #0369a1;
+/* Кнопка выхода в шапке (всегда видна и кликабельна) */
+.logout-btn {
+  background: rgba(239, 68, 68, 0.16) !important;
+  border: 1px solid rgba(239, 68, 68, 0.5) !important;
+  color: #ff9d9d !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  margin-left: 8px !important;
 }
-
-.auth-hint {
-  text-align: center;
-  margin-top: 18px;
-  color: #64748b;
-  font-size: 12px;
-}
-.hidden-by-role {
-  display: none !important;
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.35) !important;
+  color: #ffffff !important;
 }
