@@ -1072,3 +1072,135 @@ setInterval(() => {
         render();
     }
 }, 60000);
+/* =========================================================================
+   МОДУЛЬ АВТОРИЗАЦИИ И РАЗГРАНИЧЕНИЯ ПРАВ TRANSCONTROL
+   ========================================================================= */
+
+// Предустановленные аккаунты
+const AUTH_ACCOUNTS = [
+  {
+    username: 'admin',
+    password: 'adminpassword',
+    role: 'admin',
+    name: 'Администратор системы',
+    shortName: 'АД',
+    roleLabel: 'Администратор'
+  },
+  {
+    username: 'driver',
+    password: '123',
+    role: 'employee',
+    name: 'Иванов Иван (Водитель)',
+    shortName: 'ИИ',
+    roleLabel: 'Сотрудник'
+  }
+];
+
+const AUTH_STORAGE_KEY = 'transcontrol_auth_session';
+
+function initAuth() {
+  const overlay = document.getElementById('authOverlay');
+  const form = document.getElementById('authForm');
+  const errorBox = document.getElementById('authError');
+  const roleInput = document.getElementById('loginRole');
+  const roleTabs = document.querySelectorAll('.role-tab');
+  const loginLabel = document.getElementById('loginLabel');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  // Переключение табов Администратор / Сотрудник
+  roleTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      roleTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const role = tab.getAttribute('data-role');
+      roleInput.value = role;
+
+      if (role === 'admin') {
+        loginLabel.textContent = 'Логин администратора';
+      } else {
+        loginLabel.textContent = 'Табельный номер или логин водителя';
+      }
+      errorBox.style.display = 'none';
+    });
+  });
+
+  // Отправка формы авторизации
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const login = document.getElementById('authLogin').value.trim();
+    const pass = document.getElementById('authPassword').value;
+    const selectedRole = roleInput.value;
+
+    const user = AUTH_ACCOUNTS.find(
+      u => u.username.toLowerCase() === login.toLowerCase() && 
+           u.password === pass && 
+           u.role === selectedRole
+    );
+
+    if (user) {
+      errorBox.style.display = 'none';
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+      applySession(user);
+    } else {
+      errorBox.textContent = 'Неверный логин, пароль или несоответствие выбранной роли!';
+      errorBox.style.display = 'block';
+    }
+  });
+
+  // Кнопка выхода
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+      location.reload();
+    });
+  }
+
+  // Проверка сохраненной сессии при старте
+  const savedUser = JSON.parse(localStorage.getItem(AUTH_STORAGE_KEY));
+  if (savedUser) {
+    applySession(savedUser);
+  } else {
+    if (overlay) overlay.style.display = 'flex';
+  }
+}
+
+// Применение прав и интерфейса в зависимости от роли
+function applySession(user) {
+  const overlay = document.getElementById('authOverlay');
+  if (overlay) overlay.style.display = 'none';
+
+  // Обновление профиля в шапке
+  const avatarEl = document.getElementById('currentUserAvatar');
+  const nameEl = document.getElementById('currentUserName');
+  const roleEl = document.getElementById('currentUserRole');
+
+  if (avatarEl) avatarEl.textContent = user.shortName;
+  if (nameEl) nameEl.textContent = user.name;
+  if (roleEl) roleEl.textContent = user.roleLabel;
+
+  // Разграничение видимости для Сотрудника vs Админа
+  const navItems = document.querySelectorAll('aside nav a, aside nav button');
+  const actionButtons = document.querySelectorAll('.btn-add, [data-action="add-employee"], [data-action="create-shift"]');
+
+  if (user.role === 'employee') {
+    // Сотруднику скрываем управление командой и глобальные финансовые/сводные отчеты
+    navItems.forEach(item => {
+      const text = item.textContent.toLowerCase();
+      if (text.includes('команда') || text.includes('отчёт') || text.includes('отчет')) {
+        item.classList.add('hidden-by-role');
+      } else {
+        item.classList.remove('hidden-by-role');
+      }
+    });
+
+    // Скрываем кнопки создания сотрудников и ручного изменения
+    actionButtons.forEach(btn => btn.classList.add('hidden-by-role'));
+  } else {
+    // Администратору доступно абсолютно всё
+    navItems.forEach(item => item.classList.remove('hidden-by-role'));
+    actionButtons.forEach(btn => btn.classList.remove('hidden-by-role'));
+  }
+}
+
+// Запуск инициализации при загрузке документа
+document.addEventListener('DOMContentLoaded', initAuth);
