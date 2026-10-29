@@ -10,6 +10,41 @@
   <link defer="" href="assets/css/style.css" rel="stylesheet"/>
  </head>
  <body>
+<div id="authOverlay" class="auth-overlay">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-badge">↗</div>
+      <h2>ТРАНС<span>КОНТРОЛЬ</span></h2>
+      <p>Вход в систему учёта рабочего времени</p>
+    </div>
+    <div class="auth-role-tabs">
+      <button type="button" class="role-tab active" data-role="admin">Администратор</button>
+      <button type="button" class="role-tab" data-role="employee">Сотрудник</button>
+    </div>
+
+    <form id="authForm" class="auth-form">
+      <input type="hidden" id="loginRole" value="admin">
+
+      <div class="form-group">
+        <label id="loginLabel" for="authLogin">Логин администратора</label>
+        <input type="text" id="authLogin" placeholder="Введите логин" autocomplete="username" required>
+      </div>
+
+      <div class="form-group">
+        <label for="authPassword">Пароль</label>
+        <input type="password" id="authPassword" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+
+      <div id="authError" class="auth-error" style="display: none;"></div>
+
+      <button type="submit" class="auth-submit-btn">Войти в панель</button>
+
+      <div class="auth-hint">
+        <small>Демо-доступ: <b>admin / admin123</b> (Админ) или <b>driver / 1234</b> (Сотрудник)</small>
+      </div>
+    </form>
+  </div>
+</div>
   <div class="ambient a">
   </div>
   <div class="ambient b">
