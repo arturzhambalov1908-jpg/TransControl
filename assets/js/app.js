@@ -27,12 +27,11 @@ setInterval(()=>{if(!document.hidden)render()},60000);
 
 
 /* ==========================================================================
-   МОДУЛЬ АВТОРИЗАЦИИ, РЕГИСТРАЦИИ И ВЫХОДА (TRANSCONTROL AUTH V3)
+   МОДУЛЬ АВТОРИЗАЦИИ, РЕГИСТРАЦИИ И ВЫХОДА (TRANSCONTROL AUTH V4 - FOOLPROOF)
    ========================================================================== */
 const AUTH_KEY = 'transcontrol_auth_session';
 const USERS_STORAGE_KEY = 'transcontrol_custom_users';
 
-// Базовые учетные записи
 const DEFAULT_USERS = [
   {
     username: 'admin',
@@ -67,14 +66,35 @@ function saveUser(u) {
   localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
 }
 
-// Глобальная функция выхода (доступна из HTML и JS в любом месте)
+// Глобальная функция выхода
 window.logoutTransControl = function() {
   localStorage.removeItem(AUTH_KEY);
   location.reload();
 };
 
-function setupAuthModule() {
+function hideAuthModal() {
   const overlay = document.getElementById('authOverlay');
+  if (overlay) {
+    overlay.classList.add('auth-hidden');
+    overlay.style.setProperty('display', 'none', 'important');
+    overlay.style.setProperty('visibility', 'hidden', 'important');
+    overlay.style.setProperty('opacity', '0', 'important');
+    overlay.style.setProperty('pointer-events', 'none', 'important');
+  }
+}
+
+function showAuthModal() {
+  const overlay = document.getElementById('authOverlay');
+  if (overlay) {
+    overlay.classList.remove('auth-hidden');
+    overlay.style.setProperty('display', 'flex', 'important');
+    overlay.style.setProperty('visibility', 'visible', 'important');
+    overlay.style.setProperty('opacity', '1', 'important');
+    overlay.style.setProperty('pointer-events', 'auto', 'important');
+  }
+}
+
+function setupAuthModule() {
   const loginForm = document.getElementById('authForm');
   const regForm = document.getElementById('regForm');
   const loginError = document.getElementById('authError');
@@ -86,7 +106,7 @@ function setupAuthModule() {
   const btnModeLogin = document.getElementById('btnModeLogin');
   const btnModeRegister = document.getElementById('btnModeRegister');
 
-  // Переключение между Входом и Регистрацией
+  // Переключение: Вход / Регистрация
   if (btnModeLogin && btnModeRegister) {
     btnModeLogin.onclick = function() {
       btnModeLogin.classList.add('active');
@@ -103,7 +123,7 @@ function setupAuthModule() {
     };
   }
 
-  // Переключение ролей на форме входа
+  // Переключение роли
   roleTabs.forEach(tab => {
     tab.onclick = function() {
       roleTabs.forEach(t => t.classList.remove('active'));
@@ -117,14 +137,15 @@ function setupAuthModule() {
     };
   });
 
-  // Отправка формы входа
+  // Вход
   if (loginForm) {
     loginForm.onsubmit = function(e) {
       e.preventDefault();
       const loginVal = (document.getElementById('authLogin')?.value || '').trim().toLowerCase();
       const passVal = document.getElementById('authPassword')?.value || '';
       const selectedRole = roleInput?.value || 'admin';
-        const allUsers = [...DEFAULT_USERS, ...getStoredUsers()];
+
+      const allUsers = [...DEFAULT_USERS, ...getStoredUsers()];
       const user = allUsers.find(u => 
         u.username.toLowerCase() === loginVal && 
         u.password === passVal && 
@@ -144,7 +165,7 @@ function setupAuthModule() {
     };
   }
 
-  // Регистрация нового сотрудника
+  // Регистрация
   if (regForm) {
     regForm.onsubmit = function(e) {
       e.preventDefault();
@@ -176,7 +197,7 @@ function setupAuthModule() {
 
       saveUser(newUser);
 
-      // Добавляем в общий список сотрудников системы TransControl
+      // Синхронизация с базой сотрудников TransControl
       try {
         if (typeof data !== 'undefined' && Array.isArray(data.employees)) {
           if (!data.employees.some(emp => emp.number === number)) {
@@ -200,24 +221,24 @@ function setupAuthModule() {
     };
   }
 
-  // Проверка сохраненной сессии при старте
+  // Проверка сессии при загрузке страницы
   const saved = localStorage.getItem(AUTH_KEY);
   if (saved) {
     try {
       applyRolePermissions(JSON.parse(saved));
     } catch(err) {
-      if (overlay) overlay.style.display = 'flex';
+      showAuthModal();
     }
   } else {
-    if (overlay) overlay.style.display = 'flex';
+    showAuthModal();
   }
 }
 
 function applyRolePermissions(user) {
-  const overlay = document.getElementById('authOverlay');
-  if (overlay) overlay.style.display = 'none';
+  // Закрываем окно входа гарантированно
+  hideAuthModal();
 
-  // 1. Принудительно меняем имя, аватар и статус в шапке
+  // Обновляем профиль в шапке
   const avatar = document.getElementById('currentUserAvatar');
   const name = document.getElementById('currentUserName');
   const role = document.getElementById('currentUserRole');
@@ -226,7 +247,7 @@ function applyRolePermissions(user) {
   if (name) name.textContent = user.name || (user.role === 'admin' ? 'Администратор' : 'Сотрудник');
   if (role) role.textContent = user.badge || (user.role === 'admin' ? 'Полный доступ' : 'Сотрудник');
 
-  // 2. Разграничение прав доступа
+  // Разграничение прав доступа
   const navItems = document.querySelectorAll('aside nav button');
   const actionBtns = document.querySelectorAll('[data-action="add-employee"], #addEmployeeBtn, #downloadCsv');
 
@@ -246,7 +267,7 @@ function applyRolePermissions(user) {
   }
 }
 
-// Запуск модуля
+// Запуск инициализации
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', setupAuthModule);
 } else {
